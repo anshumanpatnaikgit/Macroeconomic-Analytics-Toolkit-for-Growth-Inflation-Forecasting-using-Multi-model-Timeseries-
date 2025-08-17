@@ -1,0 +1,255 @@
+---
+title: "Forecasting of the USA Inflation using Different models under Timeseries"
+author: "Anshuman Patnaik"
+date: "2024-10-29"
+output:
+  word_document: default
+  html_document: default
+---
+
+
+Introduction:
+
+Understanding and accurately forecasting inflation is crucial for policymakers, economists, and investors. Inflation forecasting enables better decision-making in monetary policies, financial planning, and business strategy. With this study, we aim to investigate USA inflation through time series forecasting models. Specifically, the study explores several models, such as mean forecast, naïve forecast, seasonal naïve, and random walk forecasts. Each model's accuracy is evaluated, and ARIMA modeling is utilized for more detailed analysis.
+
+Literature Review:
+
+Inflation forecasting has been widely studied, with numerous approaches introduced over the years. Traditional models, such as ARIMA (AutoRegressive Integrated Moving Average), have been widely applied due to their capacity to handle non-stationary data and produce reliable short-term forecasts. Advanced models, including seasonal and trend decomposition, are beneficial in capturing seasonal variations often observed in economic time series. Previous research has shown mixed results on which model performs best, with some findings indicating that simple models, such as random walk and naïve forecasts, perform similarly or better than complex ones when dealing with inflation data.
+
+
+Data:
+
+
+
+This study analyzes USA inflation data and corresponding GDP values from 1961 to 2005. The dataset was imported and processed in R for model application. Each variable was inspected to ensure it was appropriate for time series analysis.
+
+
+
+Methodology:
+
+
+
+Data Transformation and Visualization: The data was loaded and initially visualized to observe patterns. Inflation was converted into a time series object to facilitate time series analysis.
+
+Stationarity Testing: Stationarity, a critical property for time series forecasting, was checked using the Augmented Dickey-Fuller (ADF) test. Since non-stationary data can lead to unreliable models, we differenced the series until it achieved stationarity.
+
+
+Modeling Techniques:
+
+Mean Forecast: This approach assumes that future values will match the mean of past observations.
+Naïve Forecast: In this model, the last observed value is projected forward.
+Seasonal Naïve Forecast: Suitable for data with seasonality, this approach repeats previous seasonal patterns.
+Random Walk Forecast (RWF): This model assumes that changes in data follow a random path, making it appropriate for non-stationary data with trends.
+Evaluation Metrics: Each model was assessed based on key accuracy metrics, including RMSE (Root Mean Square Error) and MAPE (Mean Absolute Percentage Error). The Ljung-Box test checked for autocorrelation in residuals, ensuring model robustness.
+
+ARIMA Modeling: After testing the initial models, ARIMA (AutoRegressive Integrated Moving Average) modeling was applied. The model was selected using auto.arima() in R, and its effectiveness was tested through residual analysis and forecast comparison.
+
+
+
+Results and Discussion:
+
+The findings indicate that the initial models (mean, naïve, seasonal naïve, and random walk) show varying degrees of accuracy:
+
+Mean Forecast and Naïve Forecast: Both yielded significant errors and autocorrelations, indicating less suitability for this dataset.
+Seasonal Naïve Forecast: This model exhibited stability with relatively lower error rates, making it suitable for datasets with seasonal variations.
+Random Walk with Drift: While capturing trends effectively, this model's residuals indicated possible issues with autocorrelation, limiting its forecasting power.
+Further testing with the ARIMA model (specifically ARIMA (0,1,2)) demonstrated its efficacy in managing non-stationary data. The model yielded a satisfactory p-value in the Ljung-Box test, confirming that it appropriately handled the dataset’s characteristics.
+
+
+
+```{r}
+options(repos = c(CRAN = "https://cran.rstudio.com/"))
+```
+
+
+
+
+```{r}
+#INSTALLING PACKAGES 
+library(ggplot2)
+library(tidyverse)
+install.packages("forecast")
+library(forecast)
+install.packages("tseries")
+library(tseries)
+library(vars)
+install.packages("fpp2")
+library(fpp2)
+```
+
+
+
+
+```{r}
+install.packages("readxl")
+library(readxl)
+USA_GDP_WORKING_ <- read_excel("/Users/anshuman/Desktop/TERM PAPER, BAIJU/DATASET/USA/USAGDPWORKING1.xls")
+
+
+#VIEWING THE DATASET USA_GDP_WORKING (includes inflation)
+
+NewDATA=USA_GDP_WORKING_[1:59,c(1,3)]
+
+
+#PLOTTING THE VARIABLES OF THE DATASET
+plot(NewDATA$TIME,y=NewDATA$INFLATION,type = ("o"),xlab=("TIME"),ylab=("INFLATION"))
+```
+
+
+
+
+```{r}
+#converting inflation into timeseries dataset
+
+USAINFLATIONTIME=ts(NewDATA$INFLATION,start = min(NewDATA$TIME),end = max(NewDATA$TIME),frequency = 1)
+
+#time plots of the datasets
+autoplot(USAINFLATIONTIME)+xlab("TIME")+ylab("INFLATION")
+
+#autocorrelation check for the data
+
+
+pacf(diff(USAINFLATIONTIME))
+```
+
+
+
+
+
+```{r}
+#checking stationary
+adf.test(USAINFLATIONTIME)
+USAINFLATIONdiff=diff(USAINFLATIONTIME)
+adf.test(USAINFLATIONdiff)
+pacf(USAINFLATIONdiff)
+```
+
+
+
+
+
+```{r}
+#checking if white noise is occurring 
+acf(diff(USAINFLATIONdiff))
+#AUTOPLOT FOR THE DIFFERENCED VARIABALES
+autoplot(USAINFLATIONdiff,xlab=("TIME"),ylab = ("INFLATION"),col=c("red"))+ggtitle("Integration Model of order 1 for INFLATION")
+```
+
+
+
+
+
+```{r}
+#CREATING A TRAINING DATA FOR CHECKING THE ACCURACY OF OUR FORECASTING MODELS 
+#for inflation data
+USAINFLATIONTIME_2=window(USAINFLATIONdiff,start=1961,end=2001)
+INFLA1=meanf(USAINFLATIONTIME_2,h=10)
+INFLA2=naive(USAINFLATIONTIME_2,h=10)
+INFLA3=snaive(USAINFLATIONTIME_2,h=10)
+INFLA4=rwf(USAINFLATIONTIME_2,h=10,drift = FALSE)
+
+
+
+#creating a test data and checking accuracy
+USAINFLATIONTIME_3=window(USAINFLATIONdiff,start=2002)
+
+accuracy(INFLA1,USAINFLATIONTIME_3)
+accuracy(INFLA2,USAINFLATIONTIME_3)
+accuracy(INFLA3,USAINFLATIONTIME_3)
+accuracy(INFLA4,USAINFLATIONTIME_3)
+
+#checking for autocorrealtions
+checkresiduals(INFLA1)#significant p value
+checkresiduals(INFLA2)#significant p value
+checkresiduals(INFLA3)#significant p value
+checkresiduals(INFLA4)#significant p value
+```
+
+
+
+DUE TO SIGNIFICANT P VALUE< WE REJECT THE NULL OF NO AUTO CORRELATION IN THE FORECAST MODELS. WE THUS CREATE A NEW DATA SET WITH SECOND DIFFERENCE OF THE INFLATION DATA TO FORECAST OUR MODELS 
+
+
+
+```{r}
+#checking for Second Difference 
+#CREATING A TRAINING DATA FOR CHECKING THE ACCURACY OF OUR FORECASTING MODELS 
+#for inflation data
+USAINFLATIONTIME_2=window(diff(USAINFLATIONdiff),start=1961,end=2001)
+INFLA1a=meanf(USAINFLATIONTIME_2,h=10)
+INFLA2b=naive(USAINFLATIONTIME_2,h=10)
+INFLA3c=snaive(USAINFLATIONTIME_2,h=10)
+INFLA4d=rwf(USAINFLATIONTIME_2,h=10,drift = FALSE)
+
+
+#creating a test data and checking accuracy
+USAINFLATIONTIME_3=window(diff(USAINFLATIONdiff),start=2002)
+
+accuracy(INFLA1a,USAINFLATIONTIME_3)
+accuracy(INFLA2b,USAINFLATIONTIME_3)
+accuracy(INFLA3c,USAINFLATIONTIME_3)
+accuracy(INFLA4d,USAINFLATIONTIME_3)
+
+#checking for autocorrelations
+checkresiduals(INFLA1a)#significant p value
+checkresiduals(INFLA2b)#insignificant p value
+checkresiduals(INFLA3c)#insignificant p value
+checkresiduals(INFLA4d)#insignificant p value
+
+#out of this, INFLA3 is the most stable form of prediction
+autoplot(INFLA4d)+xlab("TIME")+ylab("INFLATION")+ggtitle("FORECASTING INFLATION WITH SNAIVE")
+```
+
+
+```{r}
+#Through the ARIMA  MODELLING 
+
+#INFLATION FORECASTING (DIRECTLY WITHOUT STATIONARITY)
+
+model2=auto.arima(USAINFLATIONTIME)
+model2
+forecast2=forecast(model2,h=10)
+autoplot(forecast2)
+checkresiduals(model2) #Insignificant P value (model is correct)
+accuracy(model2)
+
+#comparing forecasts
+
+autoplot(USAINFLATIONTIME_2)+
+  autolayer(INFLA1a$mean,series="AVERAGE")+
+  autolayer(INFLA2b$mean,series="NAIVE")+
+  autolayer(INFLA3c$mean,series="SNAIVE")+
+  autolayer(INFLA4d$mean,series="RWF")+xlab("TIME")+ylab("INFLATION")
+
+autoplot(USAINFLATIONTIME_2)+
+  autolayer(INFLA3c$mean,series="SNAIVE")+
+  autolayer(INFLA4d$mean,series="RWF")+xlab("TIME")+ylab("INFLATION")
+
+
+
+
+autoplot(USAINFLATIONTIME_2)+
+  autolayer(INFLA1a$mean,series="AVERAGE")+
+  autolayer(INFLA2b$mean,series="NAIVE")+
+  autolayer(INFLA3c$mean,series="SNAIVE")+
+  autolayer(INFLA4d$mean,series="RWF")+xlab("TIME")+ylab("INFLATION")
+
+
+
+
+
+
+autoplot(USAINFLATIONTIME_2)+
+  autolayer(INFLA3c$mean,series="SNAIVE")+
+  xlab("TIME")+ylab("INFLATION")
+
+autoplot(INFLA4)
+
+autoplot(USAINFLATIONTIME)+ autolayer(forecast2$mean,series="Future")+xlab("TIME")+
+  ylab("INFLATION")+labs(title = "ARIMA FORECASTING")
+
+```
+
+
+
+

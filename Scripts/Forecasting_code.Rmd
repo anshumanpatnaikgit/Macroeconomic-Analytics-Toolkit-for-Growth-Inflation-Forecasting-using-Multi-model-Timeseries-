@@ -1,0 +1,117 @@
+---
+title: "Forecasting"
+author: "Anshuman Patnaik"
+date: "2024-11-25"
+output:
+  word_document: default
+  html_document: default
+---
+```{r}
+library(forecast)
+library(ggplot2)
+library(tseries)
+library(dplyr)
+library(lmtest)
+library(readxl)
+GROWTH_51_data <- read_excel("/Users/anshuman/Desktop/ADV ECONOMETRICS/GROWTH 51 data.xls")
+
+GROWTH1=GROWTH_51_data[1:69,]
+
+#converting into time series
+GRts=ts(GROWTH1$GROWTH,start = min(GROWTH1$YEAR),end = max(GROWTH1$YEAR),frequency = 1)
+# Plot GDP growth
+autoplot(GRts) + 
+  ylab("GDP Growth Rate") +
+  xlab("Year")
+
+# ADF & kpss test
+adf.test(GRts)
+kpss.test(GRts)
+#acf and pacf plots of raw data
+Acf(GRts)
+Pacf(GRts)
+
+# Differencing (according to kpss)
+gdp_diff <- diff(GRts, differences = 1)
+
+autoplot(gdp_diff) + 
+  ggtitle("Differenced GDP Growth") +
+  ylab("Differenced GDP") +
+  xlab("Year")
+
+
+
+#ADF & kpss test
+adf.test(gdp_diff)
+kpss.test(gdp_diff)
+
+Acf(gdp_diff) #1 lag
+Pacf(gdp_diff)# 2 lag
+#taking the second difference of the dataset
+gdp_diff_2=diff(gdp_diff)
+Acf(gdp_diff_2)
+Pacf(gdp_diff_2)
+
+#gradual decay (pacf) with 2 spikes and one spike for acf
+modela=Arima(GRts,c(0,1,1))
+modelb=Arima(GRts,c(1,2,1))
+modelc=Arima(GRts,c(2,1,1))
+#creating the forecasts for the above 
+forecasta=forecast(modela,h=5)
+forecastb=forecast(modelb,h=5)
+forecastc=forecast(modelc,h=5)
+
+#summary analysis 
+
+summary(modela)
+summary(modelb)
+summary(modelc)
+
+#accuracy check
+accuracy(forecasta)
+accuracy(forecastb)
+accuracy(forecastc)
+
+#Simple OLS
+
+hist(log(GRts))
+#creating a time trend module 
+time= seq_along(GRts) 
+modeld=lm(GRts~time)
+
+#testing for heteroskedasticity and autocorrelation test 
+bptest(modeld)
+dwtest(modeld)
+
+#summary of the model 
+summary(modeld)
+
+#creating a new data 
+
+h <- 5
+last_time <- max(time)
+future_time_index <- data.frame(time = (last_time + 1):(last_time + h))
+
+# Forecast using the linear model
+forecastd<- predict(modeld, newdata = future_time_index)
+
+
+forecastd
+
+#checking AIC AND BIC VALUES 
+AIC(modeld)
+BIC(modeld)
+
+#OLS ENDS 
+
+
+#comparing all forecasts 
+
+forecasta #auto arima
+forecastb #paper arima
+forecastc #my arima
+forecastd #OLS
+
+
+```
+

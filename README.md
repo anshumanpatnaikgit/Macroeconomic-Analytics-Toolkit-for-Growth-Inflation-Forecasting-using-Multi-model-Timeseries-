@@ -12,19 +12,24 @@ Together, these projects demonstrate how econometric modeling can support **poli
 
 Macroeconomic-Forecasting/
 │
-├── india-gdp-forecasting/              # Project 1: India's GDP Growth
-│   ├── data/                           # Historical GDP dataset (69 years)
-│   ├── notebooks/                      # Python Jupyter notebooks
-│   └── results/                        # Forecasts, plots, diagnostics
+├── scripts/                            # All analysis scripts
+│   ├── india_gdp_forecasting.ipynb     # Python notebook for India's GDP growth
+│   ├── usa_inflation_forecasting.Rmd   # RMarkdown script for USA inflation
+│   └── utils.py                        # (optional) helper functions
 │
-├── usa-inflation-forecasting/          # Project 2: USA Inflation
-│   ├── data/                           # CPI / Inflation dataset
-│   ├── scripts/                        # RMarkdown (.Rmd) scripts
-│   └── results/                        # Forecast outputs & charts
+├── dataset/                            # All datasets
+│   ├── india_gdp_growth.csv            # 69 years of India's GDP data
+│   ├── usa_inflation_cpi.csv           # CPI-based USA inflation data
+│   └── README.md                       # Dataset descriptions
+│
+├── results/                            # Forecast outputs, plots, diagnostics
+│   ├── india_gdp_forecast.png
+│   ├── usa_inflation_forecast.png
+│   ├── india_model_diagnostics.txt
+│   └── usa_model_diagnostics.txt
 │
 └── README.md                           # Combined documentation
 
----
 
 ## 🔍 Project 1: India’s GDP Growth Forecasting
 

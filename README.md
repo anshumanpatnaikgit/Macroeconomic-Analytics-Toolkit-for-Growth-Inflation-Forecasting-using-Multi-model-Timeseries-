@@ -55,19 +55,30 @@ Macroeconomic-Forecasting/
 
 ---
 
-## ⚙️ Tools & Libraries
+Got it 👍 thanks for catching that!
+If your **India GDP Growth Forecasting** is done in **R (not Python)**, then the tools section should be rewritten accordingly.
 
-### For India GDP Forecasting (Python)
-- `pandas`, `numpy` – Data handling  
-- `statsmodels` – ARIMA, OLS regression, diagnostics  
-- `matplotlib`, `seaborn` – Visualization  
-- `scikit-learn` – Forecast accuracy metrics  
+Here’s the corrected version:
 
-### For USA Inflation Forecasting (R)
-- `forecast` – ARIMA model fitting & forecasting  
-- `tseries` – Time-series diagnostics (ADF test, etc.)  
-- `ggplot2` – Data visualization  
-- `dplyr` – Data manipulation  
+---
+
+### 📊 Tools & Libraries
+
+#### For India GDP Forecasting (**R**)
+
+* `forecast` – ARIMA model fitting & forecasting
+* `tseries` – Stationarity tests (ADF, KPSS) and diagnostics
+* `lm()` (base R) – OLS regression with time-trend
+* `ggplot2` – Visualization of time-series and forecasts
+* `dplyr` – Data manipulation & cleaning
+* `Metrics` – Forecast accuracy metrics (RMSE, MAE, MAPE)
+
+#### For USA Inflation Forecasting (**R**)
+
+* `forecast` – ARIMA model fitting & forecasting
+* `tseries` – ADF test, residual diagnostics
+* `ggplot2` – Visualization
+* `dplyr` – Data wrangling
 
 ---
 

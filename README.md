@@ -1,79 +1,93 @@
-# Multi-Model Time Series Forecasting of India’s GDP Growth Using Machine Learning
+# 🌍 Macroeconomic Forecasting Toolkit
+This repository contains two complementary research projects applying **time-series forecasting techniques** to major macroeconomic indicators:
 
-## Overview
+1. **India’s GDP Growth Forecasting (ARIMA + OLS Regression)**  
+2. **USA’s Inflation Forecasting (ARIMA + Time-Series Models in R)**  
 
-This project applies multiple time-series models to forecast India’s GDP growth rate. The analysis combines classical econometric methods with machine learning–inspired approaches to compare accuracy, interpret results, and generate policy-relevant insights.
-
-The work is based on India’s annual GDP growth dataset and evaluates whether different models yield consistent forecasts for India’s near-term growth trajectory.
-
----
-
-## Data
-
-* Dataset: **India’s annual GDP growth rate (% change)**
-* Stored locally in the `data/` folder.
-* Used for model training, validation, and forecasting.
+Together, these projects demonstrate how econometric modeling can support **policy analysis, investment decision-making, and strategic planning**.
 
 ---
 
-## Methods Used
+## 📂 Repository Structure
 
-1. **Exploratory Data Analysis (EDA)**
-
-   * Time-series plots of GDP growth.
-   * Stationarity checks using Augmented Dickey-Fuller (ADF) and KPSS tests.
-   * Autocorrelation (ACF) and Partial Autocorrelation (PACF) analysis.
-
-2. **Modeling Approaches**
-
-   * **ARIMA Models:**
-
-     * ARIMA(0,1,1), ARIMA(1,2,1), ARIMA(2,1,1).
-   * **OLS Trend Model:**
-
-     * Linear regression with time as predictor.
-   * (Optional future extension) **Machine Learning Models:** Prophet, LSTM, Random Forest regression.
-
-3. **Forecasting & Evaluation**
-
-   * Out-of-sample forecasts for 5 years.
-   * Model comparison using RMSE, MAE, AIC, and BIC.
-   * Scenario-based forecasts (base vs. optimistic vs. pessimistic).
+Macroeconomic-Forecasting/
+│
+├── india-gdp-forecasting/ # Project 1: India's GDP Growth
+│ ├── data/ # Historical GDP dataset (69 years)
+│ ├── notebooks/ # Python notebooks
+│ ├── models/ # Saved ARIMA/OLS models
+│ └── results/ # Forecasts, plots, diagnostics
+│
+├── usa-inflation-forecasting/ # Project 2: USA Inflation
+│ ├── data/ # CPI / Inflation dataset
+│ ├── scripts/ # RMarkdown (.Rmd) scripts
+│ ├── models/ # Trained ARIMA models
+│ └── results/ # Forecast outputs & charts
+│
+└── README.md # Combined documentation
 
 ---
 
-## Results Summary
+## 🔍 Project 1: India’s GDP Growth Forecasting
 
-* ARIMA(2,1,1) delivered the lowest RMSE among ARIMA models.
-* The OLS trend model produced smooth linear forecasts (approximately 7.1% annual growth).
-* ARIMA models captured more short-run volatility compared to OLS.
-* Forecasts from all models suggest India’s GDP growth stabilizing in the 6–7% range over the next five years.
-
----
-
-## Project Structure
-
-```
-├── data/                     # Contains India GDP growth dataset
-├── scripts/                  # R/Python notebooks for modeling
-├── results/                  # Model summaries, forecasts, plots
-└── README.md                 # This file
-```
+- **Dataset**: 69 years of India’s annual GDP growth.  
+- **Models**: ARIMA(0,1,1), ARIMA(1,2,1), ARIMA(2,1,1), and OLS regression with time-trend.  
+- **Validation**:
+  - Stationarity checks: ADF & KPSS tests  
+  - Residual diagnostics: Ljung-Box, Breusch-Pagan, Durbin-Watson  
+- **Metrics**: AIC, BIC, RMSE, MAE, MAPE  
+- **Key Insight**: ARIMA(2,1,1) achieved the best fit and predictive performance, outperforming OLS regression.  
 
 ---
 
-## How to Run
+## 🔍 Project 2: USA’s Inflation Forecasting
 
-1. Ensure the GDP growth dataset is stored in the `data/` directory.
-2. Open the R script or notebook.
-3. Run stationarity checks, build ARIMA models, and compare with OLS trend.
-4. Generate 5-year forecasts and plots.
+- **Dataset**: Historical U.S. CPI-based inflation rates (monthly/quarterly).  
+- **Models**: ARIMA-based time-series forecasting in R (using `forecast` and `tseries` libraries).  
+- **Validation**:
+  - Stationarity tests (ADF)  
+  - Residual diagnostics to ensure model adequacy  
+- **Metrics**: AIC, BIC, RMSE, MAE  
+- **Key Insight**: ARIMA models captured short-term cyclical inflation trends, producing reliable forecasts for policy and investment strategy.  
 
 ---
 
-## Key Takeaways
+## ⚙️ Tools & Libraries
 
-* A multi-model approach reduces model risk in economic forecasting.
-* Comparative forecasts provide more reliable inputs for strategic planning.
-* Forecast outputs can be integrated into macroeconomic dashboards for decision-making.
+### For India GDP Forecasting (Python)
+- `pandas`, `numpy` – Data handling  
+- `statsmodels` – ARIMA, OLS regression, diagnostics  
+- `matplotlib`, `seaborn` – Visualization  
+- `scikit-learn` – Forecast accuracy metrics  
 
+### For USA Inflation Forecasting (R)
+- `forecast` – ARIMA model fitting & forecasting  
+- `tseries` – Time-series diagnostics (ADF test, etc.)  
+- `ggplot2` – Data visualization  
+- `dplyr` – Data manipulation  
+
+---
+
+## 📊 Results & Applications
+
+- **India GDP Forecasting** → Supports macroeconomic planning, policy evaluation, and investor risk assessment in emerging markets.  
+- **USA Inflation Forecasting** → Useful for central banks, investors, and businesses monitoring price stability and monetary policy.  
+
+---
+
+## 🚀 Future Extensions
+- Expand to **multivariate forecasting models** (VAR, VECM) including trade, fiscal, and monetary variables.  
+- Compare **machine learning models** (XGBoost, LSTM) with classical econometrics.  
+- Build a **dashboard** to visualize forecasts interactively.  
+
+---
+
+## 👤 Author
+**Anshuman Patnaik**  
+M.Sc. Economics | Strategy & Data Science | Consulting & Policy Research  
+📧 [anshumanpatnaik777@gmail.com](mailto:anshumanpatnaik777@gmail.com)  
+
+---
+
+## ⭐ Acknowledgments
+These projects integrate econometric modeling with applied macroeconomic analysis to demonstrate the value of **data-driven forecasting for strategy, policy, and consulting use cases**.

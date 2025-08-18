@@ -94,4 +94,4 @@ M.Sc. Economics | Strategy & Data Science | Consulting & Policy Research
 
 ## ⭐ Acknowledgments  
 
-This work integrates **econometric modeling in R** with applied macroeconomic analysis to highlight the role of **data-driven forecasting** in shaping economic strategy and consulting insights.  
+This work integrates **econometric modeling in R** with applied macroeconomic analysis to highlight the role of **data-driven forecasting** in shaping economic planning.  

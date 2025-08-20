@@ -7,111 +7,129 @@ output:
   html_document: default
 ---
 ```{r}
-library(forecast)
-library(ggplot2)
-library(tseries)
-library(dplyr)
-library(lmtest)
-library(readxl)
+# Load required libraries
+library(forecast)   # For ARIMA modeling, ACF/PACF, and forecasting
+library(ggplot2)    # For visualization
+library(tseries)    # For stationarity tests (ADF, KPSS)
+library(dplyr)      # For data manipulation
+library(lmtest)     # For diagnostic tests (BP, DW)
+library(readxl)     # For importing Excel data
+
+# Import dataset
 GROWTH_51_data <- read_excel("/Users/anshuman/Desktop/ADV ECONOMETRICS/GROWTH 51 data.xls")
 
+# Select first 69 observations (dataset specific trimming)
 GROWTH1=GROWTH_51_data[1:69,]
 
-#converting into time series
-GRts=ts(GROWTH1$GROWTH,start = min(GROWTH1$YEAR),end = max(GROWTH1$YEAR),frequency = 1)
-# Plot GDP growth
+# Convert GDP growth column into a time series object
+GRts=ts(GROWTH1$GROWTH, start=min(GROWTH1$YEAR), end=max(GROWTH1$YEAR), frequency=1)
+
+# Plot raw GDP growth series
 autoplot(GRts) + 
   ylab("GDP Growth Rate") +
   xlab("Year")
 
-# ADF & kpss test
+#-------------------#
+# Stationarity Tests
+#-------------------#
+# ADF (null: non-stationary) and KPSS (null: stationary) complement each other
 adf.test(GRts)
 kpss.test(GRts)
-#acf and pacf plots of raw data
+
+# ACF and PACF of raw series (to check persistence and potential AR/MA structure)
 Acf(GRts)
 Pacf(GRts)
 
-# Differencing (according to kpss)
+#-------------------#
+# Differencing the data
+#-------------------#
+# First difference (guided by KPSS results if non-stationary)
 gdp_diff <- diff(GRts, differences = 1)
 
+# Plot first-differenced series
 autoplot(gdp_diff) + 
   ggtitle("Differenced GDP Growth") +
   ylab("Differenced GDP") +
   xlab("Year")
 
-
-
-#ADF & kpss test
+# Re-test stationarity after first differencing
 adf.test(gdp_diff)
 kpss.test(gdp_diff)
 
-Acf(gdp_diff) #1 lag
-Pacf(gdp_diff)# 2 lag
-#taking the second difference of the dataset
+# ACF/PACF of differenced data to identify ARMA structure
+Acf(gdp_diff) # Typically check for MA(q) order
+Pacf(gdp_diff) # Typically check for AR(p) order
+
+# Try second differencing if needed (over-differencing check)
 gdp_diff_2=diff(gdp_diff)
 Acf(gdp_diff_2)
 Pacf(gdp_diff_2)
 
-#gradual decay (pacf) with 2 spikes and one spike for acf
-modela=Arima(GRts,c(0,1,1))
-modelb=Arima(GRts,c(1,2,1))
-modelc=Arima(GRts,c(2,1,1))
-#creating the forecasts for the above 
+#-------------------#
+# ARIMA Models
+#-------------------#
+# Based on ACF/PACF inspection, propose alternative ARIMA specifications
+# modela: ARIMA(0,1,1) - a simple random walk with MA(1)
+# modelb: ARIMA(1,2,1) - higher differencing and AR+MA terms
+# modelc: ARIMA(2,1,1) - moderate differencing with richer AR structure
+modela=Arima(GRts, c(0,1,1))
+modelb=Arima(GRts, c(1,2,1))
+modelc=Arima(GRts, c(2,1,1))
+
+# Forecast next 5 periods with each model
 forecasta=forecast(modela,h=5)
 forecastb=forecast(modelb,h=5)
 forecastc=forecast(modelc,h=5)
 
-#summary analysis 
-
+# Model summaries (coefficients, significance, diagnostics)
 summary(modela)
 summary(modelb)
 summary(modelc)
 
-#accuracy check
+# Forecast accuracy metrics (MAPE, RMSE, etc.)
 accuracy(forecasta)
 accuracy(forecastb)
 accuracy(forecastc)
 
-#Simple OLS
-
+#-------------------#
+# Simple OLS Benchmark
+#-------------------#
+# Plot histogram of log(GRts) to check distribution
 hist(log(GRts))
-#creating a time trend module 
-time= seq_along(GRts) 
-modeld=lm(GRts~time)
 
-#testing for heteroskedasticity and autocorrelation test 
+# Create a deterministic time trend variable
+time= seq_along(GRts) 
+modeld=lm(GRts ~ time)
+
+# Test OLS residuals for heteroskedasticity (BP test) and autocorrelation (DW test)
 bptest(modeld)
 dwtest(modeld)
 
-#summary of the model 
+# OLS model summary (trend significance, R^2, etc.)
 summary(modeld)
 
-#creating a new data 
-
+# Forecast future GDP growth using linear trend model
 h <- 5
 last_time <- max(time)
 future_time_index <- data.frame(time = (last_time + 1):(last_time + h))
 
-# Forecast using the linear model
-forecastd<- predict(modeld, newdata = future_time_index)
-
-
+forecastd <- predict(modeld, newdata=future_time_index)
 forecastd
 
-#checking AIC AND BIC VALUES 
+# Compare model fit criteria for OLS
 AIC(modeld)
 BIC(modeld)
 
-#OLS ENDS 
-
-
-#comparing all forecasts 
-
-forecasta #auto arima
-forecastb #paper arima
-forecastc #my arima
-forecastd #OLS
-
-
+#-------------------#
+# Forecast Comparison
+#-------------------#
+# Comparing forecasts from ARIMA models vs OLS
+forecasta # ARIMA(0,1,1)
+forecastb # ARIMA(1,2,1)
+forecastc # ARIMA(2,1,1)
+forecastd # Linear trend OLS
 ```
+
+
+
 

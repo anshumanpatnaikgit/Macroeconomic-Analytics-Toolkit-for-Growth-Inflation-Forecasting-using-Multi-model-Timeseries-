@@ -10,6 +10,8 @@ Together, these projects demonstrate how econometric modeling can support **poli
 ---
 
 ## 📂 Repository Structure  
+
+```bash
 Macroeconomic-Forecasting/
 │
 ├── scripts/                           # All analysis scripts
@@ -29,8 +31,6 @@ Macroeconomic-Forecasting/
 │   └── usa_model_diagnostics.txt
 │
 └── README.md                          # Combined documentation
-
-
 
 ---
 
